@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Public Library Access in Appalachian Ohio</title>
+<style>
+  html, body{
+      width: 100%;
+      height: 100%;
+      background-color: black;
+    }
+    #MainDiv {
+    padding: 1;
+        float: left;
+        left: 0;
+    margin-left: .5%;
+    height: 100%;
+    width: 55%;
+  }
+  
+  #viewDiv {
+    padding: 1;
+        float: right;
+    height: 100%;
+    width: 69%;
+  }
+  
+  #LegendDiv {
+        float: left;
+        left: 0;
+        padding: 1;
+        margin: 0;
+        height: 100%;
+        width: 30%;
+		background-color: black
+    }
+	
+	#LegendTitleDiv{
+        float: left;
+        height: 5%;
+    width: 16.5%;
+    background-color: black;
+        color: white;
+        text-align: center;
+        padding-right: 0.5%;
+        font-weight: 400;
+        font-size: 25px
+    }
+	
+    #titleDiv{
+        float: left;
+        height: 5%;
+    width: 39%;
+    background-color: black;
+        color: white;
+        text-align: center;
+        padding-right: 0.5%;
+        font-weight: 400;
+        font-size: 25px
+    }
+	
+	#titleDiv2{
+        float: right;
+        height: 5%;
+    width: 43%;
+    background-color: black;
+        color: white;
+        text-align: center;
+        padding-right: 0.5%;
+        font-weight: 400;
+        font-size: 25px
+    }
+	
+	#titleDiv3{
+        float: top;
+        height: 5%;
+    width: 100%;
+    background-color: black;
+        color: white;
+        text-align: center;
+        padding-right: 0.5%;
+        font-weight: 400;
+        font-size: 25px
+    }
+	
+    h2{
+     text-align: center;
+        color: white; 
+        float: right
+    }
+    #header {
+        width: 100%;
+        background-color: green;
+        height: 10%;
+        text-align: center;
+        color: white;
+    }
+	
+	#SideDiv {
+    padding: 1;
+        float: right;
+        right: 0;
+    margin-right: .5%;
+    height: 100%;
+    width: 43%;
+  }
+  
+    #viewDiv2 {
+        float: top;
+        right: 0;
+        padding: 1;
+        margin: 0;
+        height: 47.5%;
+        width: 100%;
+    }
+	
+	#viewDiv3 {
+        float: bottom;
+        right: 100;
+        padding: 1;
+        margin: 0;
+        height: 47.5%;
+        width: 100%;
+    }
+	
+    #extentDiv{
+        border: 2px solid red;
+        position: absolute;
+        z-index: 2;
+    }
+	
+</style>
+<link rel="stylesheet" 
+href="https://js.arcgis.com/4.28/esri/css/main.css">
+<script src="https://js.arcgis.com/4.28/"></script>
+<script>
+	require([
+	"esri/Map",
+	"esri/views/MapView",
+	"esri/layers/FeatureLayer",
+	"esri/widgets/ScaleBar",
+	"esri/widgets/LayerList"
+	], function(Map,MapView,FeatureLayer,ScaleBar,LayerList){
+	
+		var map = new Map({
+            basemap: "streets"
+        });
+        var view = new MapView({
+            container: "viewDiv",
+            map: map,
+            zoom: 6,
+            center: [-83, 40]
+        });
+        
+        var map2 = new Map({
+            basemap:"streets"
+        });
+        var view2 = new MapView({
+            container: "viewDiv2",
+            map: map2,
+            zoom: 6,
+            center: [-83, 40],
+              constraints: {
+                rotationEnabled: false
+            }
+        });
+		
+		var map3 = new Map({
+            basemap:"streets"
+        });
+        var view3 = new MapView({
+            container: "viewDiv3",
+            map: map3,
+            zoom: 6,
+            center: [-83, 40],
+              constraints: {
+                rotationEnabled: false
+            }
+        });
+		
+		const lib_access = new FeatureLayer({
+        portalItem: {
+            id: "9295c79f81854e6db719f36c73e5a0f1"
+        },
+           title:"Library Access"
+    });
+        map.add(lib_access);
+		
+		const pop_2020 = new FeatureLayer({
+        portalItem: {
+            id: "2e0eba1dc8974fdda32f07c0d211e02d"
+        },
+           title:"2020 Population"
+    });
+        map2.add(pop_2020);
+		
+		const medHHinc_2020 = new FeatureLayer({
+        portalItem: {
+            id: "09c4ece5fee84aba8b20009bff1923a3"
+        },
+           title:"2020 Median Household Income"
+    });
+        map3.add(medHHinc_2020);
+		
+		const scaleBar = new ScaleBar({
+			view: view,
+		});
+		view.ui.add(scaleBar, {position: "bottom-right", index:1});	
+		
+		const layerList = new LayerList({
+            view: view,
+			container: LegendDiv,
+            listItemCreatedFunction: function(event){
+                const item = event.item;
+                if (item.layer.type !="group"){
+                    item.panel = {
+                        content: "legend",
+                        open: true
+                    };
+                }
+            }
+        });
+		
+		const layerList2 = new LayerList({
+            view: view2,
+			container: LegendDiv,
+            listItemCreatedFunction: function(event){
+                const item = event.item;
+                if (item.layer.type !="group"){
+                    item.panel = {
+                        content: "legend",
+                        open: true
+                    };
+                }
+            }
+        });
+		
+		const layerList3 = new LayerList({
+            view: view3,
+			container: LegendDiv,
+            listItemCreatedFunction: function(event){
+                const item = event.item;
+                if (item.layer.type !="group"){
+                    item.panel = {
+                        content: "legend",
+                        open: true
+                    };
+                }
+            }
+        });
+		
+		const views = [view, view2, view3];
+        let active;
+
+        const sync = (source) => {
+          if (!active || !active.viewpoint || active !== source) {
+            return;
+          }
+
+          for (const view of views) {
+            if (view !== active) {
+              view.viewpoint = active.viewpoint;
+            }
+          }
+        };
+
+        for (const view of views) {
+          view.watch(["interacting", "animation"], () => {
+            active = view;
+            sync(active);
+          });
+
+          view.watch("viewpoint", () => sync(view));
+        }
+		
+		});
+		
+	</script>
+ </head>
+<body>
+ 
+<div id = "header"; style="display: table; height: 15px; overflow: hidden;" ><h1 style="vertical-align: middle">Public Library Access in Appalachian Ohio</h1></div>
+    <div id = "LegendTitleDiv">Legend</div>
+	<div id = "titleDiv">Public Library Access</div>
+    <div id = "titleDiv2">2020 Population</div>
+	<div id = "MainDiv"><div id = "viewDiv"></div><div id="LegendDiv"></div></div>
+	<div id = "SideDiv"><div id = "viewDiv2"></div><div id = "titleDiv3">2020 Median Household Income</div><div id="viewDiv3"></div></div>
+    
+
+</body>
+</html>
